@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "226241484769",
+    "firebase_url": "https://isports-c.firebaseio.com",
+    "project_id": "isports-c",
+    "storage_bucket": "isports-c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226241484769:android:19732efa26345b1b3ea4a0",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226241484769-q4qcnbf8c2vj8e5ta7gcc01kfaq0e4qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpqn4Tu-0dWR8mNY6Fr6lq0XxtVon3i5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "226241484769-q4qcnbf8c2vj8e5ta7gcc01kfaq0e4qp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

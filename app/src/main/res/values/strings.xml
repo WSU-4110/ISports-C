@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">ISports-C</string>
+
+    <string name="logout">LogOut</string>
+    <string name="my_sports">my_sports</string>
+    <string name="find_locations">find_locations</string>
+    <string name="find_groups">find_groups</string>
+    <string name="players">players</string>
+    <string name="bet">bet</string>
+    <string name="book">book</string>
+    <string name="chat">chat</string>
+    <string name="filter">filter</string>
+    <string name="soccer_3_groups">soccer_3_groups</string>
+    <string name="volleyball_2_groups">volleyball_2_groups</string>
+    <string name="basketball_5_groups">basketball_5_groups</string>
+    <string name="polo_no_groups_found">polo_no_groups_found</string>
+    <string name="login">login</string>
+    <string name="signup">signup</string>
+    <string name="enter_email">Email</string>
+    <string name="password">password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="add_credit_debit_card_optional">Add credit/debit card (Optional)</string>
+    <string name="save">SAVE</string>
+
+    <string name="check_remember">Remember Me</string>
+    <string name="show_password">Show Password</string>
+    
+    <string name="facebook_app_id">768865233539953</string>
+    <string name="fb_login_protocol_scheme">fb768865233539953</string>
+    <string name="resetpassword">resetPassword</string>
+    <string name="email">Email</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="reset_password_now">Reset Password Now</string>
+
+</resources>
