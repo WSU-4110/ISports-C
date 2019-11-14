@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.facebook.android:facebook-login:5.9.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/22da4db94af33941397aa99ca2272f04/jetified-facebook-login-5.9.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/22da4db94af33941397aa99ca2272f04/jetified-facebook-login-5.9.0/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.android/facebook-login/5.9.0/df2a4599a0872b3dff2e07c63e76415f3ac7d894/facebook-login-5.9.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.android/facebook-login/5.9.0/e5bcfdc20a03bb8cff1d9b320904304f870d8ed5/facebook-login-5.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".resetPasswordActivity"></activity>
-        <activity android:name=".cardInfoActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
