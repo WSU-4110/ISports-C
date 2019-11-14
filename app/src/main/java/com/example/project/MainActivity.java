@@ -58,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
+       
         mFirebaseAuth = FirebaseAuth.getInstance();
         emailId = findViewById(R.id.editText);
         Facebook = findViewById(R.id.login_button);
@@ -126,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         Facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,10 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(MainActivity.this, resetPasswordActivity.class);
                 startActivity(i);
             }
-
-
-
-
 
         });
         mPrefs= getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -168,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         emailId.getText().clear();
         password.getText().clear();
 
-
         showPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean b) {
@@ -186,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void getPreferencesData(){
         SharedPreferences sp=getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if(sp.contains("pref_name")){
@@ -194,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
             emailId.setText(u.toString());
 
         }
-
 
         if(sp.contains("pref_pass")){
             String p=sp.getString("pref_pass","not found");
@@ -208,9 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
-
-
-
             @Override
             protected void onStart() {
                 super.onStart();
@@ -219,7 +206,3 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-
-
-
