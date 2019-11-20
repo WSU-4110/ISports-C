@@ -136,30 +136,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2">
 
-
         <Button
-            android:id="@+id/button11"
+            android:id="@+id/btnFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/soccer_3_groups" />
+            android:text="@string/filterop" />
 
-        <Button
-            android:id="@+id/button12"
+        <TextView
+            android:id="@+id/tvOptionFiltered"
+            android:textSize="25sp"
+            android:textStyle="italic"
+            android:layout_gravity="center"
+            android:textColor="@color/colorPrimary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/volleyball_2_groups" />
-
-        <Button
-            android:id="@+id/button13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/basketball_5_groups" />
-
-        <Button
-            android:id="@+id/button14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/polo_no_groups_found" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
