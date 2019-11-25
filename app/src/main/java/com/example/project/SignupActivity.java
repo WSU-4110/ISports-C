@@ -24,18 +24,23 @@ public class SignupActivity extends AppCompatActivity {
     TextView cardInfo;
     FirebaseAuth mFirebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
         mFirebaseAuth =FirebaseAuth.getInstance();
-        emailId=findViewById(R.id.editText);
-        password=findViewById(R.id.editText2);
+        emailId=findViewById(R.id.emailAddress);
+        password=findViewById(R.id.password);
         cardInfo=findViewById(R.id.cardInfo);
-        btnSignup=findViewById(R.id.button);
-        tvSignup=findViewById(R.id.button2);
+        btnSignup=findViewById(R.id.signUp);
+        tvSignup=findViewById(R.id.backToLogin);
+
+
         btnSignup.setOnClickListener(new View.OnClickListener(){
+
+
 
             @Override
             public void onClick(View v) {
