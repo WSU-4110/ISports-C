@@ -1,51 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".cardInfoActivity">
+    tools:context=".ui.cardInfoActivity">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ScrollView
-            android:id="@+id/scrollView2"
+        <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <com.braintreepayments.cardform.view.SupportedCardTypesView
-                android:id="@+id/supported_card_types"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="5dp" />
-        </ScrollView>
+            android:layout_height="228dp"
+            android:contentDescription="@string/card"
+            android:src="@drawable/card" />
 
-        <com.braintreepayments.cardform.view.CardForm
-            android:id="@+id/card_form"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_above="@+id/save"
+            android:layout_below="@+id/imageView3"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="49dp"
+            android:layout_marginEnd="216dp"
+            android:layout_marginBottom="198dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="@string/first_name" />
+
+
+        <EditText
+            android:id="@+id/lastname"
+            android:layout_width="197dp"
+            android:layout_height="170dp"
+            android:layout_above="@+id/save"
+            android:layout_below="@+id/imageView3"
+            android:layout_alignStart="@+id/editText3"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="195dp"
+            android:layout_marginTop="49dp"
+            android:layout_marginEnd="11dp"
+            android:layout_marginBottom="195dp"
+            android:autofillHints=""
+            android:inputType="text"
+            android:text="@string/last_name" />
+
+        <EditText
+            android:id="@+id/cardNum"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/bt_margin" />
+            android:layout_above="@+id/save"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="191dp"
+            android:layout_marginBottom="129dp"
+            android:inputType="number"
+            android:text="@string/card_number" />
 
-    </LinearLayout>
+        <EditText
+            android:id="@+id/cvv"
+            android:layout_width="wrap_content"
+            android:layout_height="47dp"
+            android:layout_above="@+id/save"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="272dp"
+            android:layout_marginEnd="76dp"
+            android:layout_marginBottom="148dp"
+            android:text="@string/cvv" />
 
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom='true'
-        android:background="@color/colorAccent"
-        android:text="@string/save"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.995"
-        tools:layout_editor_absoluteX="-16dp" />
+        <EditText
+            android:id="@+id/expiry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/save"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="259dp"
+            android:layout_marginBottom="56dp"
+            android:inputType="datetime"
+            android:text="@string/expiry_date"
+            android:autofillHints="" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="171dp"
+            android:layout_marginEnd="152dp"
+            android:layout_marginBottom="41dp"
+            android:background="@drawable/theme_button"
+            android:text="@string/save"
+            />
+</RelativeLayout>
