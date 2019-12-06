@@ -1,10 +1,9 @@
-package com.example.project;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+package com.First.ISportsC.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -12,11 +11,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.First.ISportsC.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class resetPasswordActivity extends AppCompatActivity {
+
     private Toolbar mToolbar;
     private Button ResetPassword;
     private EditText resetEmail;
@@ -28,7 +29,7 @@ public class resetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password);
 
 
-        mAuth=FirebaseAuth.getInstance();
+        mAuth= FirebaseAuth.getInstance();
 
         ResetPassword= (Button) findViewById(R.id.resetPassword);
         resetEmail =(EditText) findViewById(R.id.TypeEmail);
@@ -47,7 +48,7 @@ public class resetPasswordActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
                                 Toast.makeText(resetPasswordActivity.this, "Check Your Email For Password Reset", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(resetPasswordActivity.this,MainActivity.class));
+                                startActivity(new Intent(resetPasswordActivity.this, MainActivity.class));
                             }
 
                             else{

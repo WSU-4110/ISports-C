@@ -1,225 +1,412 @@
-package com.example.project;
+package com.First.ISportsC.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.First.ISportsC.R;
+import com.First.ISportsC.adapters.ChatroomRecyclerAdapter;
+import com.First.ISportsC.models.Game;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.facebook.FacebookSdk;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
 
-public class MainActivity extends AppCompatActivity {
-   private EditText emailId, password;
-    private Button btnSignin;
-    private Button tvSignin;
-    private Button Facebook;
-    private FirebaseAuth mFirebaseAuth;
-    private TextView forgotPassword;
-    private CheckBox mCheckBoxRemember;
-    private SharedPreferences mPrefs;
-    private static final String PREFS_NAME= "PrefsFile";
+import static com.First.ISportsC.Constants.ERROR_DIALOG_REQUEST;
 
-    private CheckBox showPassword;
+public class MainActivity extends AppCompatActivity implements
+        View.OnClickListener,
+        ChatroomRecyclerAdapter.ChatroomRecyclerClickListener
+{
 
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    Button FindLocation;
+
+    private static final String TAG = "MainActivity";
+
+    //widgets
+    private ProgressBar mProgressBar;
+
+    //vars
+    private ArrayList<Game> mGames = new ArrayList<>();
+    private Set<String> mChatroomIds = new HashSet<>();
+    //    private Set<Game> mGames = new HashSet<>();
+    private ChatroomRecyclerAdapter mChatroomRecyclerAdapter;
+    private RecyclerView mChatroomRecyclerView;
+    private ListenerRegistration mChatroomEventListener;
+    private FirebaseFirestore mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgressBar = findViewById(R.id.progressBar);
+        mChatroomRecyclerView = findViewById(R.id.chatrooms_recycler_view);
+
+        findViewById(R.id.fab_create_chatroom).setOnClickListener(this);
+
+        findViewById(R.id.Bet).setOnClickListener(this);
+
+        findViewById(R.id.specialGames).setOnClickListener(this);
+
+        FindLocation = findViewById(R.id.find_location);
+
+        mDb = FirebaseFirestore.getInstance();
+
+        initSupportActionBar();
+        initChatroomRecyclerView();
 
 
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        emailId = findViewById(R.id.editText);
-        Facebook = findViewById(R.id.login_button);
-        password = findViewById(R.id.editText2);
-        btnSignin = findViewById(R.id.button);
-        tvSignin = findViewById(R.id.button2);
-        forgotPassword= findViewById(R.id.forgotPassword);
-        mCheckBoxRemember= (CheckBox)findViewById(R.id.checkBoxRememberMe);
-        showPassword=(CheckBox)findViewById(R.id.checkShowPassword);
-
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-
-
+        FindLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                if (mFirebaseUser != null) {
-                    Toast.makeText(MainActivity.this, "You are logged in", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(MainActivity.this, HomeActivity.class);
-                }
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
             }
-        };
+        });
+    }
 
-        btnSignin.setOnClickListener(new View.OnClickListener() {
+    private void initSupportActionBar(){
+        setTitle("Active Games");
+    }
+
+
+    public boolean isMapsEnabled(){
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+            return false;
+        }
+        return true;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainActivity.this);
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+
+
+            case R.id.Bet:{
+                newBetDialog();
+            }
+            case R.id.fab_create_chatroom:{
+                newChatroomDialog();
+
+            }
+
+            case R.id.specialGames:{
+                newSpecialGameDialog();
+
+            }
+        }
+
+    }
+
+
+
+    private void initChatroomRecyclerView(){
+        mChatroomRecyclerAdapter = new ChatroomRecyclerAdapter(mGames, this);
+        mChatroomRecyclerView.setAdapter(mChatroomRecyclerAdapter);
+        mChatroomRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void getChatrooms(){
+
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        mDb.setFirestoreSettings(settings);
+
+        CollectionReference chatroomsCollection = mDb
+                .collection(getString(R.string.collection_chatrooms));
+
+        mChatroomEventListener = chatroomsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onClick(View v) {
-                String email = emailId.getText().toString();
-                String pwd = password.getText().toString();
-                if (email.isEmpty()) {
-                    emailId.setError("Please enter Email Id");
-                    emailId.requestFocus();
-                } else if (pwd.isEmpty()) {
-                    password.setError("Please Enter your Password");
-                    password.requestFocus();
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                Log.d(TAG, "onEvent: called.");
 
-                } else if (email.isEmpty() && pwd.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Fields Are Empty"
-                            , Toast.LENGTH_SHORT).show();
-                } else if (!(email.isEmpty() && pwd.isEmpty())) {
-                    mFirebaseAuth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(MainActivity.this, "Login Error, please Login Again"
-                                        , Toast.LENGTH_SHORT).show();
-                            } else {
-                                Intent intToHome = new Intent(MainActivity.this, HomeActivity.class);
-                                startActivity(intToHome);
-                            }
+                if (e != null) {
+                    Log.e(TAG, "onEvent: Listen failed.", e);
+                    return;
+                }
+
+                if(queryDocumentSnapshots != null){
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+
+                        Game game = doc.toObject(Game.class);
+                        if(!mChatroomIds.contains(game.getChatroom_id())){
+                            mChatroomIds.add(game.getChatroom_id());
+                            mGames.add(game);
                         }
-                    });
-                } else {
-                    Toast.makeText(MainActivity.this, "Error Ocurred"
-                            , Toast.LENGTH_SHORT).show();
+                    }
+                    Log.d(TAG, "onEvent: number of Games: " + mGames.size());
+                    mChatroomRecyclerAdapter.notifyDataSetChanged();
+                }
+
+            }
+        });
+    }
+
+    private void buildNewChatroom(String chatroomName){
+
+        final Game game = new Game();
+        game.setTitle(chatroomName);
+
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        mDb.setFirestoreSettings(settings);
+
+        DocumentReference newChatroomRef = mDb
+                .collection(getString(R.string.collection_chatrooms))
+                .document();
+
+        game.setChatroom_id(newChatroomRef.getId());
+
+        newChatroomRef.set(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                hideDialog();
+
+                if(task.isSuccessful()){
+                    navChatroomActivity(game);
+                }else{
+                    View parentLayout = findViewById(android.R.id.content);
+                    Snackbar.make(parentLayout, "Something went wrong.", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
-        tvSignin.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void navChatroomActivity(Game game){
+        Intent intent = new Intent(MainActivity.this, ChatroomActivity.class);
+        intent.putExtra(getString(R.string.intent_chatroom), game);
+        startActivity(intent);
+    }
+
+    private void newChatroomDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Game!! \n@Example: Soccer,28/11/19");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("CREATE", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intSignup = new Intent(MainActivity.this, SignupActivity.class);
-                startActivity(intSignup);
-            }
-        });
-
-
-        Facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(i);
-            }
-
-        });
-
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, resetPasswordActivity.class);
-                startActivity(i);
-            }
-
-
-
-
-
-        });
-        mPrefs= getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
-
-
-        if (mCheckBoxRemember.isChecked()){
-            Boolean boolIsChecked= mCheckBoxRemember.isChecked();
-            SharedPreferences.Editor editor= mPrefs.edit();
-            editor.putString("pref_name",emailId.getText().toString());
-            editor.putString("pref_pass",password.getText().toString());
-            editor.putBoolean("pref_check",boolIsChecked);
-            editor.apply();
-            Toast.makeText(getApplicationContext(), "Settings Have been Saved", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            mPrefs.edit().clear().apply();
-        }
-
-        emailId.getText().clear();
-        password.getText().clear();
-
-
-        showPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean b) {
-                if (b){
-                    password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-
+            public void onClick(DialogInterface dialog, int which) {
+                if(!input.getText().toString().equals("")){
+                    buildNewChatroom(input.getText().toString());
                 }
-
-                else{
-                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
+                else {
+                    Toast.makeText(MainActivity.this, "Create Game", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
 
+        builder.show();
+    }
+
+    public void newBetDialog(){
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+        builder2.setTitle("Create Bet Game!! \n@Example: PingPong, 28/11/19, $20");
+
+        final EditText input2 = new EditText(this);
+        input2.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder2.setView(input2);
+
+        builder2.setPositiveButton("CREATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!input2.getText().toString().equals("")){
+                    buildNewChatroom(input2.getText().toString());
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "Create A bet Game", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder2.show();
     }
 
 
-    private void getPreferencesData(){
-        SharedPreferences sp=getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        if(sp.contains("pref_name")){
-            String u=sp.getString("pref_name","not found");
-            emailId.setText(u.toString());
 
-        }
+    public void newSpecialGameDialog(){
 
+        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+        builder3.setTitle("Create Specialized Game!! \n@Example: Soccer, 28/11/19, Kids");
 
-        if(sp.contains("pref_pass")){
-            String p=sp.getString("pref_pass","not found");
-            password.setText(p.toString());
-        }
+        final EditText input3 = new EditText(this);
+        input3.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder3.setView(input3);
 
-        if(sp.contains("pref_check")){
-            Boolean b=sp.getBoolean("pref_check", false);
-            mCheckBoxRemember.setChecked(b);
-        }
-
-        };
-
-
-
-
+        builder3.setPositiveButton("CREATE", new DialogInterface.OnClickListener() {
             @Override
-            protected void onStart() {
-                super.onStart();
-                mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+            public void onClick(DialogInterface dialog, int which) {
+                if(!input3.getText().toString().equals("")){
+                    buildNewChatroom(input3.getText().toString());
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "Create A Specialized Game", Toast.LENGTH_SHORT).show();
+                }
             }
+        });
+        builder3.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
 
-
+        builder3.show();
     }
 
 
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mChatroomEventListener != null){
+            mChatroomEventListener.remove();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getChatrooms();
+    }
+
+    @Override
+    public void onChatroomSelected(int position) {
+        navChatroomActivity(mGames.get(position));
+//        navChatroomActivity( ((Game)(mGames.toArray()[position])));
+    }
+
+    private void signOut(){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_sign_out:{
+                signOut();
+                return true;
+            }
+            default:{
+                return super.onOptionsItemSelected(item);
+            }
+        }
+
+    }
+
+    private void showDialog(){
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideDialog(){
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+
+}
