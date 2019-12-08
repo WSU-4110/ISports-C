@@ -19,3 +19,6 @@ Internet Sports Connect
   <li>Kenneth Yen - Project Researcher</li>
   <li>Abi Kayode- Project Documentor</li>
 </ull>
+
+<h3>The Original Project File for this project is in URL- https://github.com/WSU-4110/ISports-C-</h3>
+We had to remake the whole app.
