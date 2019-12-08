@@ -15,7 +15,7 @@ Internet Sports Connect
 <h3> Created by </h3>
 <ul> 
   <li>Ayush Shrestha- Team Leader</li>
-  <li>Daniel Stonajoski - Project Planner<li>
-  <li>Kenneth Yen - Project Researcher<li>
-  <li>Abi Kayode- Project Documentor<li>
+  <li>Daniel Stonajoski - Project Planner</li>
+  <li>Kenneth Yen - Project Researcher</li>
+  <li>Abi Kayode- Project Documentor</li>
 </ull>
