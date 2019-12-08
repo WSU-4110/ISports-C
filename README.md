@@ -1,6 +1,5 @@
 # ISports-C
 Internet Sports Connect
-<h1>ISports-C</h1>
 <h3>What is this project?</h3>
 <p>This is a simple real-time chat application built using Firebase Authentication and Firestore.</p>
 <p> Built it mostly to use as a starting-point for other applications that have a real-time chat portion.</p>
